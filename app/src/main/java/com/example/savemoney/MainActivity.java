@@ -17,6 +17,7 @@ import androidx.core.view.WindowInsetsCompat;
 public class MainActivity extends AppCompatActivity {
 
     TextView tvmainbalance,tvtotalexpense,tvexpense,tvtotalincome,tvincome;
+    DataBaseHelper dbhelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
         tvexpense=findViewById(R.id.tvexpense);
         tvtotalincome=findViewById(R.id.tvtotalincome);
         tvincome=findViewById(R.id.tvincome);
+        dbhelper = new DataBaseHelper(this);
 
         tvexpense.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -49,6 +51,23 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
+        updateUi();
 
+    }
+
+    public void updateUi(){
+        tvtotalexpense.setText("BDT: "+dbhelper.getTotalExpense() );
+        tvtotalincome.setText("BDT: "+dbhelper.getTotalIncome() );
+        double Balance = dbhelper.getTotalIncome()-dbhelper.getTotalExpense();
+        tvmainbalance.setText("BDT: "+Balance);
+    }
+
+    //===================================================================
+
+
+    @Override
+    protected void onPostResume() {
+        super.onPostResume();
+        updateUi();
     }
 }
