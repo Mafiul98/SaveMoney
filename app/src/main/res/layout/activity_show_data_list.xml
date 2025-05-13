@@ -39,12 +39,27 @@
         android:textSize="20sp"
         />
 
+    <TextView
+        android:id="@+id/deleteall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Delete All"
+        android:textSize="15sp"
+        android:background="@drawable/bottom_shade"
+        android:layout_gravity="right"
+        android:layout_marginTop="5dp"
+        android:padding="5dp"
+        android:clickable="true"
+        android:foreground="?attr/selectableItemBackground"
+        android:visibility="gone"
+        />
+
 
     <ListView
         android:id="@+id/listview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="2dp"
         />
 
 </LinearLayout>

@@ -48,13 +48,13 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
     public Cursor getAllExpense(){
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery("select * from expense",null);
+        Cursor cursor = db.rawQuery("select * from expense order by id desc",null);
         return cursor;
     }
 
     public Cursor getAllIncome(){
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery("select * from income",null);
+        Cursor cursor = db.rawQuery("select * from income order by id desc",null);
         return cursor;
     }
 
@@ -95,6 +95,18 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         db.execSQL("delete from income where id like "+id);
     }
+
+    public void DeleteAllExpense(){
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete("expense",null,null);
+        db.close();
+    }
+    public void DeleteAllIncome(){
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete("income",null,null);
+        db.close();
+    }
+
 
 }
 

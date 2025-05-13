@@ -1,5 +1,9 @@
 package com.example.savemoney;
 
+import static android.view.View.GONE;
+
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Build;
@@ -33,6 +37,7 @@ public class ShowDataList extends AppCompatActivity {
     EditText edamount,edreason;
     Button button;
     ListView listview;
+    TextView deleteall;
     public static boolean SAVEMONEY = true;
 
     DataBaseHelper dbhelper;
@@ -52,9 +57,10 @@ public class ShowDataList extends AppCompatActivity {
         edreason=findViewById(R.id.edreason);
         button=findViewById(R.id.button);
         listview=findViewById(R.id.listview);
+        deleteall=findViewById(R.id.deleteall);
         dbhelper =new DataBaseHelper(this);
 
-
+        loadData();
 
         if (SAVEMONEY==true){
             edamount.setHint("0");
@@ -64,6 +70,8 @@ public class ShowDataList extends AppCompatActivity {
             edamount.setHint("0");
             edreason.setHint("note");
         }
+
+        deleteall.setVisibility(GONE);
 
         button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -76,8 +84,12 @@ public class ShowDataList extends AppCompatActivity {
 
                     if (SAVEMONEY==true){
                         dbhelper.addExpense(amount1,reason);
+                        deleteall.setVisibility(View.VISIBLE);
+                        Toast.makeText(ShowDataList.this,"Expense Added",Toast.LENGTH_LONG).show();
                     }else {
                         dbhelper.addIncome(amount1,reason);
+                        deleteall.setVisibility(View.VISIBLE);
+                        Toast.makeText(ShowDataList.this,"Income Added",Toast.LENGTH_LONG).show();
                     }
 
                     loadData();
@@ -87,6 +99,44 @@ public class ShowDataList extends AppCompatActivity {
                 }else {
                     Toast.makeText(ShowDataList.this,"All fields required",Toast.LENGTH_LONG).show();
                 }
+
+            }
+        });
+
+        deleteall.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if (SAVEMONEY==true){
+                    new AlertDialog.Builder(ShowDataList.this)
+                            .setTitle("Delete All Data")
+                                    .setMessage("Are you sure")
+                                            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialog, int which) {
+                                                    dbhelper.DeleteAllExpense();
+                                                    loadData();
+                                                    Toast.makeText(ShowDataList.this,"All Data Deleted",Toast.LENGTH_LONG).show();
+                                                }
+                                            })
+                                                    .setNegativeButton("No",null)
+                                                            .show();
+                }else {
+                    new AlertDialog.Builder(ShowDataList.this)
+                            .setTitle("Delete All Data")
+                            .setMessage("Are you sure")
+                            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dbhelper.DeleteAllIncome();
+                                    loadData();
+                                    Toast.makeText(ShowDataList.this,"All Data Deleted",Toast.LENGTH_LONG).show();
+                                }
+                            })
+                            .setNegativeButton("No",null)
+                            .show();
+                }
+
 
             }
         });
@@ -151,10 +201,36 @@ public class ShowDataList extends AppCompatActivity {
 
             delete.setOnClickListener(v->{
 
-                if (SAVEMONEY==true)dbhelper.deleteExpense(id);
-                else dbhelper.deleteIncome(id);
-
-                loadData();
+                if (SAVEMONEY==true){
+                    new AlertDialog.Builder(ShowDataList.this)
+                            .setTitle("Delete Expense Data")
+                            .setMessage("Are you sure")
+                            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dbhelper.deleteExpense(id);
+                                    loadData();
+                                    Toast.makeText(ShowDataList.this,"Expense Deleted",Toast.LENGTH_LONG).show();
+                                }
+                            })
+                            .setNegativeButton("No",null)
+                            .show();
+                }
+                else {
+                    new AlertDialog.Builder(ShowDataList.this)
+                            .setTitle("Delete Income Data")
+                            .setMessage("Are you sure")
+                            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dbhelper.deleteIncome(id);
+                                    loadData();
+                                    Toast.makeText(ShowDataList.this,"Income Deleted",Toast.LENGTH_LONG).show();
+                                }
+                            })
+                            .setNegativeButton("No",null)
+                            .show();
+                }
 
             });
 

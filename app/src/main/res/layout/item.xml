@@ -8,7 +8,7 @@
 
     <RelativeLayout
         android:id="@+id/layExpense"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/bottom_shade"
         android:padding="10dp"
@@ -19,18 +19,20 @@
         <ImageView
             android:id="@+id/delete"
             android:src="@drawable/delete"
-            android:layout_width="35dp"
-            android:layout_height="35dp"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
             android:layout_alignParentRight="true"
-            android:layout_marginTop="40dp"
             android:clickable="true"
             android:foreground="?attr/selectableItemBackground"
             />
 
 
+
+
+
         <LinearLayout
             android:layout_alignParentLeft="true"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:gravity="left"
@@ -60,23 +62,23 @@
                 android:text="BDT 0.00"
                 android:textColor="#F44336"
                 android:textSize="17sp"
-                android:textStyle="bold"
                 />
 
+                <TextView
+                    android:id="@+id/tvreason"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Reason"
+                    android:textColor="#000000"
+                    android:textSize="15sp"
+                    android:background="#80FFEB3B"
+                    android:padding="3dp"
+                    android:layout_weight="1"
+                    android:clickable="true"
+                    android:foreground="?attr/selectableItemBackgroundBorderless"
+                    />
 
 
-            <TextView
-                android:id="@+id/tvreason"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Reason"
-                android:textColor="#000000"
-                android:textSize="15sp"
-                android:background="#80FFEB3B"
-                android:padding="3dp"
-                android:clickable="true"
-                android:foreground="?attr/selectableItemBackgroundBorderless"
-                />
 
 
 

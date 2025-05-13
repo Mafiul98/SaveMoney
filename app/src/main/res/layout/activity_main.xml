@@ -41,7 +41,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Main Balance"
-                android:textColor="#000000"
+                android:textColor="#8F000000"
                 android:gravity="center"
                 android:layout_marginTop="64dp"
                 android:textSize="16sp"
@@ -52,9 +52,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="5600"
-                android:textStyle="bold"
                 android:inputType="number"
-                android:textColor="#000000"
+                android:textColor="#D44CAF50"
                 android:gravity="center"
                 android:textSize="25sp"
                 />
@@ -85,7 +84,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="মোট ব্যয়"
-                android:textColor="#000000"
+                android:textColor="#F44336"
                 android:textSize="18sp"
                 android:textStyle="bold"
                 />
@@ -97,7 +96,6 @@
                 android:text="BDT 0.00"
                 android:textColor="#F44336"
                 android:textSize="20sp"
-                android:textStyle="bold"
                 />
 
             <androidx.cardview.widget.CardView
@@ -112,8 +110,9 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Add+"
-                        android:textColor="#000000"
+                        android:textColor="#6F000000"
                         android:textSize="18sp"
+                        android:textStyle="bold"
                         android:background="#ffffff"
                         android:padding="5dp"
                         android:layout_marginRight="7dp"
@@ -153,7 +152,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="মোট আয়"
-                android:textColor="#000000"
+                android:textColor="#16CC1D"
                 android:textSize="18sp"
                 android:textStyle="bold"
                 />
@@ -165,7 +164,6 @@
                 android:text="BDT 0.00"
                 android:textColor="#16CC1D"
                 android:textSize="20sp"
-                android:textStyle="bold"
                 />
 
             <androidx.cardview.widget.CardView
@@ -180,8 +178,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Add+"
-                    android:textColor="#000000"
+                    android:textColor="#6F000000"
                     android:textSize="18sp"
+                    android:textStyle="bold"
                     android:background="#ffffff"
                     android:padding="5dp"
                     android:layout_marginRight="7dp"
