@@ -18,50 +18,21 @@
         android:text="Save Money"
         android:textSize="35sp"
         android:gravity="center"
-        android:layout_marginTop="30sp"
+        android:layout_marginTop="15sp"
         />
 
-    <androidx.cardview.widget.CardView
-        android:layout_width="190dp"
-        android:layout_height="190dp"
-        android:layout_marginTop="70dp"
-        android:layout_gravity="center"
-        app:cardElevation="5dp"
-        app:cardCornerRadius="95sp"
-        >
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:background="@drawable/circle_colored"
 
-            >
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Main Balance"
-                android:textColor="#8F000000"
-                android:gravity="center"
-                android:layout_marginTop="64dp"
-                android:textSize="16sp"
+            <com.github.mikephil.charting.charts.PieChart
+                android:id="@+id/chart"
+                android:layout_width="250dp"
+                android:layout_height="250dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="30sp"
                 />
 
-            <TextView
-                android:id="@+id/tvmainbalance"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="5600"
-                android:inputType="number"
-                android:textColor="#D44CAF50"
-                android:gravity="center"
-                android:textSize="25sp"
-                />
-
-        </LinearLayout>
 
 
-    </androidx.cardview.widget.CardView>
 
     <RelativeLayout
         android:layout_width="match_parent"
