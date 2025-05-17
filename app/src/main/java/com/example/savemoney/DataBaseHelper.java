@@ -96,16 +96,6 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         db.execSQL("delete from income where id like "+id);
     }
 
-    public void DeleteAllExpense(){
-        SQLiteDatabase db = this.getWritableDatabase();
-        db.delete("expense",null,null);
-        db.close();
-    }
-    public void DeleteAllIncome(){
-        SQLiteDatabase db = this.getWritableDatabase();
-        db.delete("income",null,null);
-        db.close();
-    }
 
 
 }

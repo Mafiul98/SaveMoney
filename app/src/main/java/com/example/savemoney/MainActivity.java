@@ -19,6 +19,7 @@ import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
+import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.github.mikephil.charting.utils.ColorTemplate;
 
 import java.util.ArrayList;
@@ -86,12 +87,11 @@ public class MainActivity extends AppCompatActivity {
             if (totalIncome == 0 && totalExpense == 0) {
                 entries.add(new PieEntry(1f, "No Data"));
             } else {
-                if (totalIncome > 0) {
-                    entries.add(new PieEntry((float) totalIncome, "Income"));
-                }
-                if (totalExpense > 0) {
-                    entries.add(new PieEntry((float) totalExpense, "Expense"));
-                }
+                float expensePercent = (float) ((totalExpense / totalIncome) * 100);
+                float savingsPercent = 100f - expensePercent;
+
+                entries.add(new PieEntry(expensePercent, "Expense"));
+                entries.add(new PieEntry(savingsPercent, "Savings"));
             }
 
             PieDataSet pieDataSet = new PieDataSet(entries, "Income vs Expense");
@@ -102,10 +102,11 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 // আলাদা রঙ দিতে চাইলে নিজেই set করতে পারিস
                 ArrayList<Integer> colors = new ArrayList<>();
-                colors.add(Color.rgb(76, 175, 80)); // Green for income
-                colors.add(Color.rgb(244, 67, 54)); // Red for expense
+                colors.add(Color.parseColor("#e67e22"));
+                colors.add(Color.parseColor("#1e8449"));
                 pieDataSet.setColors(colors);
                 pieDataSet.setValueTextColor(Color.WHITE);
+                pieDataSet.setValueFormatter(new PercentFormatter(chart));
             }
 
             pieDataSet.setValueTextSize(14f);
@@ -125,7 +126,6 @@ public class MainActivity extends AppCompatActivity {
             chart.animateY(1000);
             chart.invalidate();
         }
-
 
 
         //===================================================================
