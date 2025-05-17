@@ -26,7 +26,7 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity {
 
     PieChart chart;
-    TextView tvmainbalance,tvtotalexpense,tvexpense,tvtotalincome,tvincome;
+    TextView tvtotalexpense,tvexpense,tvtotalincome,tvincome;
     DataBaseHelper dbhelper;
 
     @Override
@@ -65,51 +65,70 @@ public class MainActivity extends AppCompatActivity {
 
         updateUi();
 
+
     }
 
-    public void updateUi(){
-        double totalIncome = dbhelper.getTotalIncome();
-        double totalExpense = dbhelper.getTotalExpense();
-        double balance = totalIncome - totalExpense;
+    public void updateUi() {
+        double income = dbhelper.getTotalIncome();
+        double expense = dbhelper.getTotalExpense();
+        double balance = income - expense;
 
-        tvtotalincome.setText("BDT: " + totalIncome);
-        tvtotalexpense.setText("BDT: " + totalExpense);
+        tvtotalincome.setText("BDT: " + income);
+        tvtotalexpense.setText("BDT: " + expense);
         chart.setCenterText("Main Balance\n" + balance + " taka");
 
-        updatePieChart(totalIncome, totalExpense);
+        updatePieChart(income, expense); // ✅ সঠিক ডেটা পাঠানো হলো
     }
 
     private void updatePieChart(double totalIncome, double totalExpense) {
-        ArrayList<PieEntry> entries = new ArrayList<>();
-        double balance = totalIncome - totalExpense;
+            ArrayList<PieEntry> entries = new ArrayList<>();
 
-        if (balance > 0) {
-            entries.add(new PieEntry((float) balance, "Balance"));
+            if (totalIncome == 0 && totalExpense == 0) {
+                entries.add(new PieEntry(1f, "No Data"));
+            } else {
+                if (totalIncome > 0) {
+                    entries.add(new PieEntry((float) totalIncome, "Income"));
+                }
+                if (totalExpense > 0) {
+                    entries.add(new PieEntry((float) totalExpense, "Expense"));
+                }
+            }
+
+            PieDataSet pieDataSet = new PieDataSet(entries, "Income vs Expense");
+
+            if (totalIncome == 0 && totalExpense == 0) {
+                pieDataSet.setColors(Color.LTGRAY);
+                pieDataSet.setValueTextColor(Color.TRANSPARENT);
+            } else {
+                // আলাদা রঙ দিতে চাইলে নিজেই set করতে পারিস
+                ArrayList<Integer> colors = new ArrayList<>();
+                colors.add(Color.rgb(76, 175, 80)); // Green for income
+                colors.add(Color.rgb(244, 67, 54)); // Red for expense
+                pieDataSet.setColors(colors);
+                pieDataSet.setValueTextColor(Color.WHITE);
+            }
+
+            pieDataSet.setValueTextSize(14f);
+
+            PieData pieData = new PieData(pieDataSet);
+            chart.setData(pieData);
+            chart.setUsePercentValues(true);
+            chart.setDrawEntryLabels(true);
+            chart.getDescription().setEnabled(false);
+
+            double balance = totalIncome - totalExpense;
+            chart.setCenterText("Balance\n" + (int) balance + "৳");
+            chart.setCenterTextColor(Color.BLACK);
+            chart.setCenterTextSize(18f);
+            chart.setEntryLabelTextSize(10f);
+            chart.setEntryLabelColor(Color.BLACK);
+            chart.animateY(1000);
+            chart.invalidate();
         }
-        if (totalExpense > 0) {
-            entries.add(new PieEntry((float) totalExpense, "Expense"));
-        }
 
-        PieDataSet pieDataSet = new PieDataSet(entries, "Usage Summary");
-        pieDataSet.setColors(ColorTemplate.MATERIAL_COLORS);
-        pieDataSet.setValueTextColor(Color.WHITE);
-        pieDataSet.setValueTextSize(14f);
 
-        PieData pieData = new PieData(pieDataSet);
-        chart.setData(pieData);
-        chart.setUsePercentValues(true);
-        chart.setDrawEntryLabels(true);
-        chart.getDescription().setEnabled(false);
-        chart.setCenterText("Balance\n" + (int)(totalIncome - totalExpense));
-        chart.setCenterTextColor(Color.BLACK);
-        chart.setCenterTextSize(18f);
-        chart.setEntryLabelTextSize(10f);
-        chart.setEntryLabelColor(Color.BLACK);
-        chart.animateY(1000);
-        chart.invalidate();
-    }
 
-    //===================================================================
+        //===================================================================
 
 
     @Override
@@ -117,5 +136,6 @@ public class MainActivity extends AppCompatActivity {
         super.onPostResume();
         updateUi();
     }
+
 
 }
