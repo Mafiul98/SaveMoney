@@ -1,7 +1,5 @@
 package com.example.savemoney;
 
-import static android.view.View.GONE;
-
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -20,12 +18,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -164,6 +158,7 @@ public class ShowDataList extends AppCompatActivity {
             tvtime.setText(formattedDate);
 
             delete.setOnClickListener(v->{
+                int dataId = Integer.parseInt(id);
 
                 if (SAVEMONEY==true){
                     new AlertDialog.Builder(ShowDataList.this)
@@ -172,7 +167,7 @@ public class ShowDataList extends AppCompatActivity {
                             .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    dbhelper.deleteExpense(id);
+                                    dbhelper.deleteExpenseById(dataId);
                                     loadData();
                                     Toast.makeText(ShowDataList.this,"Expense Deleted",Toast.LENGTH_LONG).show();
                                 }
@@ -187,7 +182,7 @@ public class ShowDataList extends AppCompatActivity {
                             .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    dbhelper.deleteIncome(id);
+                                    dbhelper.deleteIncomeById(dataId);
                                     loadData();
                                     Toast.makeText(ShowDataList.this,"Income Deleted",Toast.LENGTH_LONG).show();
                                 }
