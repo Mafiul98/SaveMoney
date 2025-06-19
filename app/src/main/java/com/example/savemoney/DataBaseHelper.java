@@ -90,14 +90,14 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
     // ------------------------- Report Queries ----------------------------
 
-    // Daily (Exact date)
     public List<Income> getIncomesByDate(String date) {
-        return getIncomeList("SELECT * FROM income_table WHERE date = ?", date);
+        return getIncomeList("SELECT * FROM income_table WHERE date LIKE ?", date + "%");
     }
 
     public List<Expense> getExpensesByDate(String date) {
-        return getExpenseList("SELECT * FROM expense_table WHERE date = ?", date);
+        return getExpenseList("SELECT * FROM expense_table WHERE date LIKE ?", date + "%");
     }
+
 
     // Monthly (yyyy-MM)
     public List<Income> getIncomesByMonth(String yearMonth) {

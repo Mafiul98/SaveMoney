@@ -24,8 +24,10 @@ public class MainActivity extends AppCompatActivity {
             tvtotalincome, tvincome,
             tvmainbalance, tvreport;
     private final Calendar calendar = Calendar.getInstance();
-    private static final SimpleDateFormat DB_DATE_FMT =
+    private static final SimpleDateFormat DATE_FMT =
             new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+    private static final SimpleDateFormat MONTH_FMT =
+            new SimpleDateFormat("yyyy-MM", Locale.getDefault());
     private DataBaseHelper dbhelper;
 
     @Override
@@ -83,16 +85,15 @@ public class MainActivity extends AppCompatActivity {
 
     // ------------------------------------------------------------------ core UI refresh
     private void updateUi() {
-        String today = DB_DATE_FMT.format(calendar.getTime());
+        String yearMonth = MONTH_FMT.format(calendar.getTime());  // yyyy-MM
 
-        // ইনকাম
-        List<Income> incomes = dbhelper.getIncomesByDate(today);
-        double incomeSum = 0;
-        for (Income inc : incomes) incomeSum += inc.getAmount();
+        // মাস‑ভিত্তিক ইনকাম/এক্সপেন্স কুয়ারি
+        List<Income> incomes   = dbhelper.getIncomesByMonth(yearMonth);
+        List<Expense> expenses = dbhelper.getExpensesByMonth(yearMonth);
 
-        // এক্সপেন্স
-        List<Expense> expenses = dbhelper.getExpensesByDate(today);
+        double incomeSum  = 0;
         double expenseSum = 0;
+        for (Income inc : incomes)   incomeSum  += inc.getAmount();
         for (Expense exp : expenses) expenseSum += exp.getAmount();
 
         double balance = incomeSum - expenseSum;
@@ -123,7 +124,7 @@ public class MainActivity extends AppCompatActivity {
 
         new DatePickerDialog(this, (view, yy, mm, dd) -> {
             calendar.set(yy, mm, dd);
-            String selected = DB_DATE_FMT.format(calendar.getTime());
+            String selected = DATE_FMT.format(calendar.getTime());
             generateDailyPdf(selected);
         }, y, m, d).show();
     }
