@@ -12,121 +12,136 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-
 public class DataBaseHelper extends SQLiteOpenHelper {
+
+    private static final String DB_NAME = "my_database";
+    private static final int DB_VERSION = 4; // Updated version
+    private static final SimpleDateFormat DATE_FMT = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+
     public DataBaseHelper(Context context) {
-        super(context, "my_database", null, 3);
+        super(context, DB_NAME, null, DB_VERSION);
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("CREATE TABLE IF NOT EXISTS income_table (id INTEGER PRIMARY KEY AUTOINCREMENT, amount DOUBLE, reason TEXT, date TEXT)");
-        db.execSQL("CREATE TABLE IF NOT EXISTS expense_table (id INTEGER PRIMARY KEY AUTOINCREMENT, amount DOUBLE, reason TEXT, date TEXT)");
+        db.execSQL("CREATE TABLE IF NOT EXISTS income_table (" +
+                "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "amount REAL, reason TEXT, date TEXT)");
+        db.execSQL("CREATE TABLE IF NOT EXISTS expense_table (" +
+                "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "amount REAL, reason TEXT, date TEXT)");
+
+        db.execSQL("CREATE INDEX IF NOT EXISTS idx_income_date ON income_table(date)");
+        db.execSQL("CREATE INDEX IF NOT EXISTS idx_expense_date ON expense_table(date)");
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("DROP TABLE IF EXISTS income_table");
-        db.execSQL("DROP TABLE IF EXISTS expense_table");
-        onCreate(db);
+        if (oldVersion < 4) {
+            db.execSQL("CREATE INDEX IF NOT EXISTS idx_income_date ON income_table(date)");
+            db.execSQL("CREATE INDEX IF NOT EXISTS idx_expense_date ON expense_table(date)");
+        }
     }
 
+    // Insert income
     public void addIncome(double amount, String reason) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put("amount", amount);
-        values.put("reason", reason);
-        String currentDate = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date());
-        values.put("date", currentDate);
-        db.insert("income_table", null, values);
+        insert("income_table", amount, reason);
     }
 
+    // Insert expense
     public void addExpense(double amount, String reason) {
+        insert("expense_table", amount, reason);
+    }
+
+    private void insert(String table, double amount, String reason) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put("amount", amount);
         values.put("reason", reason);
-        String currentDate = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date());
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+        String currentDate = sdf.format(new Date());
         values.put("date", currentDate);
-        db.insert("expense_table", null, values);
+        db.insert(table, null, values);
     }
 
-    public Cursor getAllExpense() {
-        SQLiteDatabase db = this.getReadableDatabase();
-        return db.rawQuery("SELECT * FROM expense_table ORDER BY id DESC", null);
-    }
-
+    // Get all income
     public Cursor getAllIncome() {
         SQLiteDatabase db = this.getReadableDatabase();
         return db.rawQuery("SELECT * FROM income_table ORDER BY id DESC", null);
     }
 
+    // Get all expense
+    public Cursor getAllExpense() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        return db.rawQuery("SELECT * FROM expense_table ORDER BY id DESC", null);
+    }
+
+    // Delete income by ID
     public void deleteIncomeById(int id) {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete("income_table", "id = ?", new String[]{String.valueOf(id)});
-        db.close();
     }
 
+    // Delete expense by ID
     public void deleteExpenseById(int id) {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete("expense_table", "id = ?", new String[]{String.valueOf(id)});
-        db.close();
     }
 
+    // ------------------------- Report Queries ----------------------------
 
+    // Daily (Exact date)
     public List<Income> getIncomesByDate(String date) {
-        List<Income> incomeList = new ArrayList<>();
-        SQLiteDatabase db = this.getReadableDatabase();
-
-        Cursor cursor = db.rawQuery("SELECT * FROM income_table WHERE date = ?", new String[]{date});
-
-        if (cursor.moveToFirst()) {
-            do {
-                Income income = new Income();
-                income.setId(cursor.getInt(cursor.getColumnIndexOrThrow("id")));
-                income.setDate(cursor.getString(cursor.getColumnIndexOrThrow("date")));
-                income.setReason(cursor.getString(cursor.getColumnIndexOrThrow("reason")));
-                income.setAmount(cursor.getDouble(cursor.getColumnIndexOrThrow("amount")));
-                incomeList.add(income);
-            } while (cursor.moveToNext());
-        }
-        cursor.close();
-        return incomeList;
+        return getIncomeList("SELECT * FROM income_table WHERE date = ?", date);
     }
 
     public List<Expense> getExpensesByDate(String date) {
-        List<Expense> expenseList = new ArrayList<>();
-        SQLiteDatabase db = this.getReadableDatabase();
-
-        Cursor cursor = db.rawQuery("SELECT * FROM expense_table WHERE date = ?", new String[]{date});
-
-        if (cursor.moveToFirst()) {
-            do {
-                Expense expense = new Expense();
-                expense.setId(cursor.getInt(cursor.getColumnIndexOrThrow("id")));
-                expense.setDate(cursor.getString(cursor.getColumnIndexOrThrow("date")));
-                expense.setReason(cursor.getString(cursor.getColumnIndexOrThrow("reason")));
-                expense.setAmount(cursor.getDouble(cursor.getColumnIndexOrThrow("amount")));
-                expenseList.add(expense);
-            } while (cursor.moveToNext());
-        }
-        cursor.close();
-        return expenseList;
+        return getExpenseList("SELECT * FROM expense_table WHERE date = ?", date);
     }
 
+    // Monthly (yyyy-MM)
+    public List<Income> getIncomesByMonth(String yearMonth) {
+        return getIncomeList("SELECT * FROM income_table WHERE date LIKE ?", yearMonth + "%");
+    }
+
+    public List<Expense> getExpensesByMonth(String yearMonth) {
+        return getExpenseList("SELECT * FROM expense_table WHERE date LIKE ?", yearMonth + "%");
+    }
+
+    // Yearly (yyyy)
+    public List<Income> getIncomesByYear(String year) {
+        return getIncomeList("SELECT * FROM income_table WHERE date LIKE ?", year + "%");
+    }
+
+    public List<Expense> getExpensesByYear(String year) {
+        return getExpenseList("SELECT * FROM expense_table WHERE date LIKE ?", year + "%");
+    }
+/*
+    // Between two dates
     public List<Income> getIncomesBetween(String from, String to) {
+        return getIncomeList("SELECT * FROM income_table WHERE date BETWEEN ? AND ?", from, to);
+    }
+
+    public List<Expense> getExpensesBetween(String from, String to) {
+        return getExpenseList("SELECT * FROM expense_table WHERE date BETWEEN ? AND ?", from, to);
+    }
+
+ */
+
+    // ---------------------- Generic List Builders ------------------------
+
+    private List<Income> getIncomeList(String query, String... args) {
         List<Income> list = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
-
-        Cursor cursor = db.rawQuery("SELECT * FROM income_table WHERE date BETWEEN ? AND ?", new String[]{from, to});
+        Cursor cursor = db.rawQuery(query, args);
 
         if (cursor.moveToFirst()) {
             do {
                 Income income = new Income();
                 income.setId(cursor.getInt(cursor.getColumnIndexOrThrow("id")));
-                income.setDate(cursor.getString(cursor.getColumnIndexOrThrow("date")));
-                income.setReason(cursor.getString(cursor.getColumnIndexOrThrow("reason")));
                 income.setAmount(cursor.getDouble(cursor.getColumnIndexOrThrow("amount")));
+                income.setReason(cursor.getString(cursor.getColumnIndexOrThrow("reason")));
+                income.setDate(cursor.getString(cursor.getColumnIndexOrThrow("date")));
                 list.add(income);
             } while (cursor.moveToNext());
         }
@@ -134,19 +149,18 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         return list;
     }
 
-    public List<Expense> getExpensesBetween(String from, String to) {
+    private List<Expense> getExpenseList(String query, String... args) {
         List<Expense> list = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
-
-        Cursor cursor = db.rawQuery("SELECT * FROM expense_table WHERE date BETWEEN ? AND ?", new String[]{from, to});
+        Cursor cursor = db.rawQuery(query, args);
 
         if (cursor.moveToFirst()) {
             do {
                 Expense expense = new Expense();
                 expense.setId(cursor.getInt(cursor.getColumnIndexOrThrow("id")));
-                expense.setDate(cursor.getString(cursor.getColumnIndexOrThrow("date")));
-                expense.setReason(cursor.getString(cursor.getColumnIndexOrThrow("reason")));
                 expense.setAmount(cursor.getDouble(cursor.getColumnIndexOrThrow("amount")));
+                expense.setReason(cursor.getString(cursor.getColumnIndexOrThrow("reason")));
+                expense.setDate(cursor.getString(cursor.getColumnIndexOrThrow("date")));
                 list.add(expense);
             } while (cursor.moveToNext());
         }
@@ -154,4 +168,3 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         return list;
     }
 }
-
